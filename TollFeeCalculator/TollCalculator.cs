@@ -10,14 +10,31 @@ public class TollCalculator
      * @return - the total toll fee for that day
      */
 
-    public int GetTollFee(IVehicle vehicle, DateTime[] dates)
+    public int GetTollFee(IVehicle vehicle, List<DateTime> dates)
     {
+        if (dates is null || !dates.Any() || vehicle is null)
+        {
+            return -1;
+        }
+
+        if (!DatesIsSameDay(dates))
+        {
+            return -1;
+        }
+
+        if (vehicle.IsTollFree())
+        {
+            return 0;
+        }
+
+        dates = dates.OrderBy(d => d.Ticks).ToList();
         DateTime intervalStart = dates[0];
         int totalFee = 0;
+
         foreach (DateTime date in dates)
         {
-            int nextFee = GetTollFee(date, vehicle);
-            int tempFee = GetTollFee(intervalStart, vehicle);
+            int nextFee = GetTollFee(date);
+            int tempFee = GetTollFee(intervalStart);
 
             long diffInMillies = date.Millisecond - intervalStart.Millisecond;
             long minutes = diffInMillies / 1000 / 60;
@@ -33,23 +50,29 @@ public class TollCalculator
                 totalFee += nextFee;
             }
         }
-        if (totalFee > 60) totalFee = 60;
+        if (totalFee > 60)
+        {
+            totalFee = 60;
+        }
+
         return totalFee;
     }
 
-    private bool IsTollFreeVehicle(IVehicle vehicle)
+    private bool DatesIsSameDay(List<DateTime> dates)
     {
-        if (vehicle == null)
+        var minDate = dates.Min();
+        var maxDate = dates.Max();
+
+        if (minDate.Date != maxDate.Date)
         {
             return false;
         }
-
-        return vehicle.IsTollFree();
+        return true;
     }
 
-    public int GetTollFee(DateTime date, IVehicle vehicle)
+    private int GetTollFee(DateTime date)
     {
-        if (IsTollFreeDate(date) || IsTollFreeVehicle(vehicle))
+        if (IsTollFreeDate(date))
         {
             return 0;
         }
