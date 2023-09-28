@@ -166,5 +166,157 @@ namespace TollFeeCalculatorTests
             //ASSERT
             Assert.AreEqual(expectedResult, result);
         }
+
+        [TestMethod]
+        public void GetTollFee_TwoPassagesSamehour_HighestFeeReturned()
+        {
+            //ARRANGE
+            var expectedResult = 18;
+            var car = new Car();
+            var tollCalculator = new TollCalculator();
+            var dates = new List<DateTime> {
+                new DateTime(2013, 04, 16, 6, 45, 0),
+                new DateTime(2013, 04, 16, 7, 15, 0) };
+
+            //ACT
+            var result = tollCalculator.GetTollFee(car, dates);
+
+            //ASSERT
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void GetTollFee_FivePassagesSamehourLowerToHigher_HighestFeeReturned()
+        {
+            //ARRANGE
+            var expectedResult = 18;
+            var car = new Car();
+            var tollCalculator = new TollCalculator();
+            var dates = new List<DateTime> {
+                new DateTime(2013, 04, 16, 6, 22, 0),
+                new DateTime(2013, 04, 16, 6, 27, 0),
+                new DateTime(2013, 04, 16, 6, 45, 0),
+                new DateTime(2013, 04, 16, 7, 15, 0),
+                new DateTime(2013, 04, 16, 7, 18, 0)};
+
+            //ACT
+            var result = tollCalculator.GetTollFee(car, dates);
+
+            //ASSERT
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void GetTollFee_FivePassagesSamehourHigherToLower_HighestFeeReturned()
+        {
+            //ARRANGE
+            var expectedResult = 18;
+            var car = new Car();
+            var tollCalculator = new TollCalculator();
+            var dates = new List<DateTime> {
+                new DateTime(2013, 04, 16, 16, 45, 0),
+                new DateTime(2013, 04, 16, 16, 55, 0),
+                new DateTime(2013, 04, 16, 17, 15, 0),
+                new DateTime(2013, 04, 16, 17, 20, 0),
+                new DateTime(2013, 04, 16, 17, 40, 0)};
+
+            //ACT
+            var result = tollCalculator.GetTollFee(car, dates);
+
+            //ASSERT
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void GetTollFee_FourPassagesButTwoPerHourInterval_HighestFeeReturnedPerHour()
+        {
+            //ARRANGE
+            var expectedResult = 31;
+            var car = new Car();
+            var tollCalculator = new TollCalculator();
+            var dates = new List<DateTime> {
+                new DateTime(2013, 04, 16, 6, 27, 0),
+                new DateTime(2013, 04, 16, 6, 45, 0),
+                new DateTime(2013, 04, 16, 16, 55, 0),
+                new DateTime(2013, 04, 16, 17, 15, 0)};
+
+            //ACT
+            var result = tollCalculator.GetTollFee(car, dates);
+
+            //ASSERT
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void GetTollFee_SeveralPassagesDifferentHourInterval_HighestFeeReturnedPerHour()
+        {
+            //ARRANGE
+            var expectedResult = 57;
+            var car = new Car();
+            var tollCalculator = new TollCalculator();
+            var dates = new List<DateTime> {
+                new DateTime(2013, 04, 16, 6, 15, 0),
+                new DateTime(2013, 04, 16, 6, 45, 0),
+                new DateTime(2013, 04, 16, 6, 55, 0),
+                new DateTime(2013, 04, 16, 7, 19, 0),
+                new DateTime(2013, 04, 16, 12, 0, 0),
+                new DateTime(2013, 04, 16, 16, 45, 0),
+                new DateTime(2013, 04, 16, 17, 10, 0),
+                new DateTime(2013, 04, 16, 17, 15, 0),
+                new DateTime(2013, 04, 16, 22, 00, 0)
+            };
+
+            //ACT
+            var result = tollCalculator.GetTollFee(car, dates);
+
+            //ASSERT
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void GetTollFee_PassagesBeforeSixOClockIsRemovedFromStartInterval_StartIntervalCalculatedFromFirstPassageWithFee()
+        {
+            //ARRANGE
+            var expectedResult = 13;
+            var car = new Car();
+            var tollCalculator = new TollCalculator();
+            var dates = new List<DateTime> {
+                new DateTime(2013, 04, 16, 5, 30, 0),
+                new DateTime(2013, 04, 16, 6, 15, 0),
+                new DateTime(2013, 04, 16, 6, 45, 0)
+            };
+
+            //ACT
+            var result = tollCalculator.GetTollFee(car, dates);
+
+            //ASSERT
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void GetTollFee_PassagesForMoreThanMaximum_MaximumDailyFeeReturned()
+        {
+            //ARRANGE
+            var expectedResult = 60;
+            var car = new Car();
+            var tollCalculator = new TollCalculator();
+            var dates = new List<DateTime> {
+                new DateTime(2013, 04, 16, 6, 30, 0),
+                new DateTime(2013, 04, 16, 7, 31, 0),
+                new DateTime(2013, 04, 16, 8, 32, 0),
+                new DateTime(2013, 04, 16, 9, 33, 0),
+                new DateTime(2013, 04, 16, 10, 34, 0),
+                new DateTime(2013, 04, 16, 11, 35, 0),
+                new DateTime(2013, 04, 16, 16, 36, 0),
+                new DateTime(2013, 04, 16, 17, 37, 0),
+                new DateTime(2013, 04, 16, 18, 38, 0),
+            };
+
+            //ACT
+            var result = tollCalculator.GetTollFee(car, dates);
+
+            //ASSERT
+            Assert.AreEqual(expectedResult, result);
+        }
     }
 }

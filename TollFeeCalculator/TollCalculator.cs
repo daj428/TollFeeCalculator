@@ -27,27 +27,30 @@ public class TollCalculator
             return 0;
         }
 
-        dates = dates.OrderBy(d => d.Ticks).ToList();
+        dates = dates.Where(x => x.Hour >= 6).OrderBy(d => d.Ticks).ToList(); // Passages that are for free is removed. Otherwise they affect the StartInterval
+
         DateTime intervalStart = dates[0];
         int totalFee = 0;
+        int highestFeeCurrentHour = 0;
 
         foreach (DateTime date in dates)
         {
             int nextFee = GetTollFee(date);
-            int tempFee = GetTollFee(intervalStart);
-
-            long diffInMillies = date.Millisecond - intervalStart.Millisecond;
-            long minutes = diffInMillies / 1000 / 60;
+            var minutes = TimeSpan.FromTicks(date.Ticks - intervalStart.Ticks).TotalMinutes;
 
             if (minutes <= 60)
             {
-                if (totalFee > 0) totalFee -= tempFee;
-                if (nextFee >= tempFee) tempFee = nextFee;
-                totalFee += tempFee;
+                if (nextFee > highestFeeCurrentHour)
+                {
+                    totalFee += (nextFee - highestFeeCurrentHour);
+                    highestFeeCurrentHour = nextFee;
+                }
             }
             else
             {
                 totalFee += nextFee;
+                highestFeeCurrentHour = nextFee;
+                intervalStart = date;
             }
         }
         if (totalFee > 60)
