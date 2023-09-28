@@ -80,50 +80,68 @@ public class TollCalculator
         int hour = date.Hour;
         int minute = date.Minute;
 
-        if (hour == 6 && minute >= 0 && minute <= 29) return 8;
-        else if (hour == 6 && minute >= 30 && minute <= 59) return 13;
-        else if (hour == 7 && minute >= 0 && minute <= 59) return 18;
-        else if (hour == 8 && minute >= 0 && minute <= 29) return 13;
-        else if (hour >= 8 && hour <= 14 && minute >= 30 && minute <= 59) return 8;
-        else if (hour == 15 && minute >= 0 && minute <= 29) return 13;
-        else if (hour == 15 && minute >= 0 || hour == 16 && minute <= 59) return 18;
-        else if (hour == 17 && minute >= 0 && minute <= 59) return 13;
-        else if (hour == 18 && minute >= 0 && minute <= 29) return 8;
-        else return 0;
+        return hour switch
+        {
+            6 when (minute >= 0 && minute <= 29) => 8,
+            6 when (minute >= 30 && minute <= 59) => 13,
+            7 when (minute >= 0 && minute <= 59) => 18,
+            8 when (minute >= 0 && minute <= 29) => 13,
+            8 when (minute <= 30 && minute <= 59) => 8,
+            9 when (minute >= 0 && minute <= 59) => 8,
+            10 when (minute >= 0 && minute <= 59) => 8,
+            11 when (minute >= 0 && minute <= 59) => 8,
+            12 when (minute >= 0 && minute <= 59) => 8,
+            13 when (minute >= 0 && minute <= 59) => 8,
+            14 when (minute >= 0 && minute <= 59) => 8,
+            15 when (minute >= 0 && minute <= 29) => 13,
+            15 when (minute >= 30 && minute <= 59) => 18,
+            16 when (minute >= 0 && minute <= 59) => 18,
+            17 when (minute >= 0 && minute <= 59) => 13,
+            18 when (minute >= 0 && minute <= 29) => 8,
+            _ => 0,
+        };
     }
 
-    private Boolean IsTollFreeDate(DateTime date)
+    private bool IsTollFreeDate(DateTime date)
     {
         int year = date.Year;
         int month = date.Month;
         int day = date.Day;
 
-        if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday) return true;
+        if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+        {
+            return true;
+        }
 
         if (year == 2013)
         {
-            if (month == 1 && day == 1 ||
-                month == 3 && (day == 28 || day == 29) ||
-                month == 4 && (day == 1 || day == 30) ||
-                month == 5 && (day == 1 || day == 8 || day == 9) ||
-                month == 6 && (day == 5 || day == 6 || day == 21) ||
-                month == 7 ||
-                month == 11 && day == 1 ||
-                month == 12 && (day == 24 || day == 25 || day == 26 || day == 31))
+            switch (month)
             {
-                return true;
+                case 1 when day == 1:
+                    return true;
+
+                case 3 when (day == 28 || day == 29):
+                    return true;
+
+                case 4 when (day == 1 || day == 30):
+                    return true;
+
+                case 5 when (day == 1 || day == 8 || day == 9):
+                    return true;
+
+                case 6 when (day == 5 || day == 8 || day == 21):
+                    return true;
+
+                case 7:
+                    return true;
+
+                case 11 when day == 1:
+                    return true;
+
+                case 12 when (day == 24 || day == 25 || day == 26 || day == 31):
+                    return true;
             }
         }
         return false;
-    }
-
-    private enum TollFreeVehicles
-    {
-        Motorbike = 0,
-        Tractor = 1,
-        Emergency = 2,
-        Diplomat = 3,
-        Foreign = 4,
-        Military = 5
     }
 }
