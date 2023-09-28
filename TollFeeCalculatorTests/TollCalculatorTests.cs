@@ -318,5 +318,77 @@ namespace TollFeeCalculatorTests
             //ASSERT
             Assert.AreEqual(expectedResult, result);
         }
+
+        [TestMethod]
+        public void GetTollFee_SundayIsTollFree_NoFeeReturned()
+        {
+            //ARRANGE
+            var expectedResult = 00;
+            var car = new Car();
+            var tollCalculator = new TollCalculator();
+            var dates = new List<DateTime> {
+                new DateTime(2013, 04, 14, 8, 30, 0)
+            };
+
+            //ACT
+            var result = tollCalculator.GetTollFee(car, dates);
+
+            //ASSERT
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void GetTollFee_SaturydayIsTollFree_NoFeeReturned()
+        {
+            //ARRANGE
+            var expectedResult = 0;
+            var car = new Car();
+            var tollCalculator = new TollCalculator();
+            var dates = new List<DateTime> {
+                new DateTime(2013, 04, 13, 8, 30, 0)
+            };
+
+            //ACT
+            var result = tollCalculator.GetTollFee(car, dates);
+
+            //ASSERT
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void GetTollFee_JulyIsTollFree_NoFeeReturned()
+        {
+            //ARRANGE
+            var expectedResult = 0;
+            var car = new Car();
+            var tollCalculator = new TollCalculator();
+            var dates = new List<DateTime> {
+                new DateTime(2013, 07, 12, 8, 30, 0)
+            };
+
+            //ACT
+            var result = tollCalculator.GetTollFee(car, dates);
+
+            //ASSERT
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void GetTollFee_ChristmasEveIsTollFree_NoFeeReturned()
+        {
+            //ARRANGE
+            var expectedResult = 0;
+            var car = new Car();
+            var tollCalculator = new TollCalculator();
+            var dates = new List<DateTime> {
+                new DateTime(2013, 12, 24, 8, 30, 0)
+            };
+
+            //ACT
+            var result = tollCalculator.GetTollFee(car, dates);
+
+            //ASSERT
+            Assert.AreEqual(expectedResult, result);
+        }
     }
 }

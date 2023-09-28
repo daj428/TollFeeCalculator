@@ -17,7 +17,7 @@ public class TollCalculator
             return -1;
         }
 
-        if (!DatesIsSameDay(dates))
+        if (!DatesIsSameDay(dates)) // Only dates on the same day is allowed
         {
             return -1;
         }
@@ -27,7 +27,7 @@ public class TollCalculator
             return 0;
         }
 
-        dates = dates.Where(x => x.Hour >= 6).OrderBy(d => d.Ticks).ToList(); // Passages that are for free is removed. Otherwise they affect the StartInterval
+        dates = dates.Where(x => x.Hour >= 6).OrderBy(d => d.Ticks).ToList(); // Passages that are done before 6 AM is removed. Otherwise they affect the StartInterval
 
         DateTime intervalStart = dates[0];
         int totalFee = 0;
@@ -63,10 +63,7 @@ public class TollCalculator
 
     private bool DatesIsSameDay(List<DateTime> dates)
     {
-        var minDate = dates.Min();
-        var maxDate = dates.Max();
-
-        if (minDate.Date != maxDate.Date)
+        if (dates.Min().Date != dates.Max().Date)
         {
             return false;
         }
